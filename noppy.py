@@ -3,75 +3,75 @@ import logging
 import threading
 import random
 import time
+
 from Legobot.Connectors.IRC import IRC
 from Legobot.Lego import Lego
 from Legobot.Legos.Help import Help
+from database import greetings, are_answers, generic, how_answers, what_answers, when_answers, who_answers
 
-config = configparser.ConfigParser()
-config.read('config.ini')
-logger = logging.getLogger()
-logger.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-ch.setLevel(logging.DEBUG)
-# create formatter and add it to the handlers
-formatter = logging.Formatter(
-    '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-ch.setFormatter(formatter)
-# add the handlers to the logger
-logger.addHandler(ch)
 
-# Initialize lock and baseplate
-lock = threading.Lock()
-baseplate = Lego.start(None, lock)
-baseplate_proxy = baseplate.proxy()
-# Add children
+def bot_setup():
+    global config, logger
+    config = configparser.ConfigParser()
+    config.read('config.ini')
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    ch.setFormatter(formatter)
+    # add the handlers to the logger
+    logger.addHandler(ch)
 
-def checkGreetings(message, greetings):
-    for greeting in greetings:
+
+def bot_init():
+    global baseplate_proxy
+    # Initialize lock and baseplate
+    lock = threading.Lock()
+    baseplate = Lego.start(None, lock)
+    baseplate_proxy = baseplate.proxy()
+    # Add children
+
+
+bot_init()
+bot_setup()
+
+
+def check_greetings(message, greetings_list):
+    for greeting in greetings_list:
         for word in message.split(" "):
             if greeting == word or greeting + "." == word or greeting + "?" == word or greeting + "!" == word:
                 return True
 
-def randomGreeting(greetings):
-    return str(greetings[random.randint(0, len(greetings) -1)])
 
-def replySleep(message):
+def get_random_greeting(greetings_list):
+    return str(greetings_list[random.randint(0, len(greetings_list) - 1)])
+
+
+def reply_sleep(message):
     time.sleep(len(message) * 0.3)
 
-def readSleep(message):
-	time.sleep(len(message) * 0.2)
 
-
-greetings = ["hi", "hello", "sup", "whats up", "wassup", "zapp", "gucci", "yo", "pong"]
-generic_answers = ["I dont want to talk about it", "I prefer to keep those things quiet",
-"ask py, he knows me really well ;)", "Depends who\'s asking ;)",
-"..."]
-
-what_answers = ["69", "Your mum", "Your mum\'s mum", "py\'s mum", "a gram of weed", "its a tiny little reptile in your cup"]
-who_answers = ["The pope", "Linus Torvalds", "Richard Branson\'s nanny", "pry0cc", "Kevin Mitnick"]
-when_answers = ["1969", "the other day", "thursday", "6969", "no idea"]
-are_answers = ["Yes", "absolutely", "100%", "not a chance", "um no...", "i cant believe you asked me that", "hmm maybe", "not sure really, could be anything", 
-"NEVA", "lol, you\'re having a laugh mate", "get off those moon rocks, thats impossible"]
-how_answers = ["You take a small suser, and put it in a jar, job done!", "dont ask me, im not a genius", 
-"Google the mendles pee experiment, that might help", "you run around the room shouting 'I LOVE A DIDDY NOPPY', that should become pretty apparent."]
-
-
+def read_sleep(message):
+    time.sleep(len(message) * 0.2)
 
 
 class Greet(Lego):
     def listening_for(self, message):
-        if "noppy" in message['text'].lower() and checkGreetings(message["text"].lower() + " ", greetings):
+        if "noppy" in message['text'].lower() and check_greetings(message["text"].lower() + " ", greetings.db):
             return True
 
     def handle(self, message):
         try:
             target = message['metadata']['source_channel']
-            opts = {'target':target}
+            opts = {'target': target}
         except IndexError:
             logger.error('Could not identify message source in message: %s' % str(message))
-        text = randomGreeting(greetings)
-        readSleep(message["text"])
-        replySleep(text)
+        text = get_random_greeting(greetings.db)
+        read_sleep(message["text"])
+        reply_sleep(text)
         self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
 
     def get_name(self):
@@ -80,6 +80,7 @@ class Greet(Lego):
     def get_help(self):
         help_text = "Say hello! Usage: !helloworld"
         return help_text
+
 
 class Question(Lego):
     def listening_for(self, message):
@@ -94,54 +95,40 @@ class Question(Lego):
             logger.error('Could not identify message source in message: %s' % str(message))
         for word in message["text"].split(" "):
             if word == "why":
-                text = randomGreeting(generic_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, generic.db)
                 break
             if word == "when":
-                text = randomGreeting(when_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, when_answers.db)
                 break
             if word == "what":
-                text = randomGreeting(what_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, what_answers.db)
                 break
             if word == "who":
-                text = randomGreeting(who_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, who_answers.db)
                 break
             if word == "are" or word == "is":
-                text = randomGreeting(are_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, are_answers.db)
                 break
             if word == "how":
-                text = randomGreeting(how_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, how_answers.db)
                 break
             if word.endswith("?"):
-                text = randomGreeting(generic_answers)
-                readSleep(message["text"])
-                replySleep(text)
-                self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+                self.get_fitting_response(message, opts, generic.db)
                 break
-            
+
+    def get_fitting_response(self, message, opts, answer_flag):
+        text = get_random_greeting(answer_flag)
+        read_sleep(message["text"])
+        reply_sleep(text)
+        self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
+
     def get_name(self):
         return 'helloworld2'
 
     def get_help(self):
         help_text = "Say hello! Usage: !helloworld"
         return help_text
+
 
 baseplate_proxy.add_child(IRC,
                           channels=[channel.strip() for channel in config.get(
