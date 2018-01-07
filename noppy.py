@@ -36,7 +36,10 @@ def randomGreeting(greetings):
     return str(greetings[random.randint(0, len(greetings) -1)])
 
 def replySleep(message):
-    time.sleep(len(message) * 0.15)
+    time.sleep(len(message) * 0.3)
+
+def readSleep(message):
+	time.sleep(len(message) * 0.2)
 
 
 greetings = ["hi", "hello", "sup", "whats up", "wassup", "zapp", "gucci", "yo", "pong"]
@@ -67,6 +70,7 @@ class Greet(Lego):
         except IndexError:
             logger.error('Could not identify message source in message: %s' % str(message))
         text = randomGreeting(greetings)
+        readSleep(message["text"])
         replySleep(text)
         self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
 
@@ -91,35 +95,43 @@ class Question(Lego):
         for word in message["text"].split(" "):
             if word == "why":
                 text = randomGreeting(generic_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word == "when":
                 text = randomGreeting(when_answers)
+                readSleep(message["text"])
+                replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word == "what":
                 text = randomGreeting(what_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word == "who":
                 text = randomGreeting(who_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word == "are" or word == "is":
                 text = randomGreeting(are_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word == "how":
                 text = randomGreeting(how_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
             if word.endswith("?"):
                 text = randomGreeting(generic_answers)
+                readSleep(message["text"])
                 replySleep(text)
                 self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)
                 break
