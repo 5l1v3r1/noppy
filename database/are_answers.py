@@ -8,6 +8,6 @@ db = [
     "hmm maybe",
     "not sure really, could be anything",
     "NEVA",
-    "lol, you\'re having a laugh mate",
-    "get off those moon rocks, thats impossible"
+    "lol, you're having a laugh mate",
+    "get off those moon rocks, that's impossible"
 ]

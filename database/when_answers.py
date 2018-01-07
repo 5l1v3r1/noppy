@@ -3,5 +3,19 @@ db = [
     "the other day",
     "thursday",
     "6969",
-    "no idea"
+    "no idea",
+    "yesterday",
+    "in the future",
+    "in the past",
+    "last week",
+    "tomorrow",
+    "today!",
+    "never",
+    "2143",
+    "1337",
+    "every now and then",
+    "too often",
+    "seldom",
+    "usually",
+    "most of the time"
 ]

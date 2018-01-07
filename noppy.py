@@ -7,7 +7,7 @@ import time
 from Legobot.Connectors.IRC import IRC
 from Legobot.Lego import Lego
 from Legobot.Legos.Help import Help
-from database import greetings, are_answers, generic, how_answers, what_answers, when_answers, who_answers
+from database import greetings, are_answers, generic, how_answers, what_answers, when_answers, who_answers, why_answers
 
 
 def bot_setup():
@@ -90,12 +90,12 @@ class Question(Lego):
     def handle(self, message):
         try:
             target = message['metadata']['source_channel']
-            opts = {'target':target}
+            opts = {'target': target}
         except IndexError:
             logger.error('Could not identify message source in message: %s' % str(message))
         for word in message["text"].split(" "):
             if word == "why":
-                self.get_fitting_response(message, opts, generic.db)
+                self.get_fitting_response(message, opts, why_answers.db)
                 break
             if word == "when":
                 self.get_fitting_response(message, opts, when_answers.db)
@@ -116,8 +116,8 @@ class Question(Lego):
                 self.get_fitting_response(message, opts, generic.db)
                 break
 
-    def get_fitting_response(self, message, opts, answer_flag):
-        text = get_random_greeting(answer_flag)
+    def get_fitting_response(self, message, opts, question_type):
+        text = get_random_greeting(question_type)
         read_sleep(message["text"])
         reply_sleep(text)
         self.reply(message, str(message["metadata"]["source_username"]) + ": " + text, opts)

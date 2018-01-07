@@ -7,6 +7,11 @@ db = [
     "zapp",
     "gucci",
     "yo",
-    "pong"
+    "pong",
+    "ping",
+    "Greetings everybody",
+    "o/",
+    "wubba",
+    "ahoy"
 ]
 

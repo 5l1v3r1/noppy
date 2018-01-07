@@ -1,7 +1,25 @@
 db = [
     "The pope",
     "Linus Torvalds",
-    "Richard Branson\'s nanny",
+    "Richard Branson's nanny",
     "pry0cc",
-    "Kevin Mitnick"
+    "Kevin Mitnick",
+    "Flubby McFlapFLap",
+    "Your biggest nightmare",
+    "a nobody",
+    "an unimportant personality",
+    "Son-Goku mate",
+    "An error in the matrix",
+    "Dicksmasher McIronCock",
+    "Jesus Condom",
+    "Dixie Normus",
+    "Jack Goff",
+    "B.J. Cobbledick",
+    "Mike Litoris",
+    "a Loser",
+    "a total skid",
+    "my fanboi <3",
+    "someone great",
+    "an awesome dude",
+    "a cheesecake"
 ]
